@@ -3,7 +3,7 @@ package com.clinicaOdonto.Clinica.domain;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 @MappedSuperclass
@@ -26,6 +26,6 @@ public class Persona {
     private String direccion;
 
     @Column(nullable = false)
-    private Date fechaNacimiento;
+    private LocalDate fechaNacimiento;
 
 }
