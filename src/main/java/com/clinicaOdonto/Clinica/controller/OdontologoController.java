@@ -1,6 +1,9 @@
 package com.clinicaOdonto.Clinica.controller;
 
 import com.clinicaOdonto.Clinica.domain.Odontologo;
+import com.clinicaOdonto.Clinica.dto.OdontologoRequestDto;
+import com.clinicaOdonto.Clinica.dto.OdontologoResponseDto;
+import com.clinicaOdonto.Clinica.mapper.OdontologoMapper;
 import com.clinicaOdonto.Clinica.service.IOdontologoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -8,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/odontos")
@@ -17,26 +21,32 @@ public class OdontologoController {
     private final IOdontologoService odontologoService;
 
     @GetMapping
-    public ResponseEntity<List<Odontologo>> mostrarOdontologos() {
-        return ResponseEntity.ok(odontologoService.findAll());
+    public ResponseEntity<List<OdontologoResponseDto>> mostrarOdontologos() {
+        List<OdontologoResponseDto> responseDtos = odontologoService.findAll()
+                .stream()
+                .map(OdontologoMapper::toDto)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(responseDtos);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Odontologo> mostrarOdontologo(@PathVariable Long id) {
-        return ResponseEntity.ok(odontologoService.findById(id));
+    public ResponseEntity<OdontologoResponseDto> mostrarOdontologo(@PathVariable Long id) {
+        OdontologoResponseDto responseDto = OdontologoMapper.toDto(odontologoService.findById(id));
+        return ResponseEntity.ok(responseDto);
     }
 
     @PostMapping
     @Transactional
-    public ResponseEntity<Odontologo> crearOdontologo(@RequestBody Odontologo odonto) {
-        Odontologo odon = odontologoService.save(odonto);
-        return new ResponseEntity<>(odon, HttpStatus.CREATED);
+    public ResponseEntity<OdontologoResponseDto> crearOdontologo(@RequestBody OdontologoRequestDto requestDto) {
+        Odontologo odon = odontologoService.save(requestDto);
+        OdontologoResponseDto responseDto = OdontologoMapper.toDto(odon);
+        return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Odontologo> actualizarOdontologo(@PathVariable Long id, @RequestBody Odontologo odonto) {
-        Odontologo updateOdonto = odontologoService.update(id, odonto);
-        return ResponseEntity.ok(updateOdonto);
+    public ResponseEntity<OdontologoResponseDto> actualizarOdontologo(@PathVariable Long id, @RequestBody OdontologoRequestDto requestDto) {
+        Odontologo updateOdonto = odontologoService.update(id, requestDto);
+        return ResponseEntity.ok(OdontologoMapper.toDto(updateOdonto));
     }
 
     @DeleteMapping("/{id}")

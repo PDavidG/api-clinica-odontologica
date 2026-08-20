@@ -3,10 +3,10 @@ package com.clinicaOdonto.Clinica.service;
 import com.clinicaOdonto.Clinica.domain.Horario;
 import com.clinicaOdonto.Clinica.domain.Odontologo;
 import com.clinicaOdonto.Clinica.domain.Usuario;
+import com.clinicaOdonto.Clinica.dto.OdontologoRequestDto;
 import com.clinicaOdonto.Clinica.exception.ResourceNotFoundException;
-import com.clinicaOdonto.Clinica.repository.HorarioRepository;
+import com.clinicaOdonto.Clinica.mapper.OdontologoMapper;
 import com.clinicaOdonto.Clinica.repository.OdontologoRepository;
-import com.clinicaOdonto.Clinica.repository.UsuarioRespository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -16,23 +16,20 @@ import java.util.List;
 public class OdontologoService implements IOdontologoService{
 
     private final OdontologoRepository odontologoRepository;
-    private final UsuarioRespository usuarioRespository;
-    private final HorarioRepository horarioRepository;
+    private final IUsuarioService usuarioService;
+    private final IHorarioService horarioService;
 
     @Override
-    public Odontologo save(Odontologo odonto) {
+    public Odontologo save(OdontologoRequestDto requestDto) {
 
-        Usuario user = usuarioRespository.findById(odonto.getUser().getIdUsuario())
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("no existe el id: " + odonto.getUser().getIdUsuario()));
+        Odontologo odontologo = OdontologoMapper.toEntity(requestDto);
 
-        Horario hora = horarioRepository.findById(odonto.getHorario().getIdHorario())
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("no existe el horario con el id: "+ odonto.getHorario().getIdHorario()));
+        Usuario user = usuarioService.findById(requestDto.getUserId());
+        Horario hora = horarioService.findById(requestDto.getHorarioId());
 
-        odonto.setUser(user);
-        odonto.setHorario(hora);
-        return odontologoRepository.save(odonto);
+        odontologo.setUser(user);
+        odontologo.setHorario(hora);
+        return odontologoRepository.save(odontologo);
     }
 
     @Override
@@ -54,19 +51,27 @@ public class OdontologoService implements IOdontologoService{
     }
 
     @Override
-    public Odontologo update(Long id, Odontologo odonto) {
+    public Odontologo update(Long id, OdontologoRequestDto requestDto) {
         Odontologo updateOdonto = odontologoRepository.findById(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("No se encontro al odontologo con el id: " + id));
 
-        updateOdonto.setNombre(odonto.getNombre());
-        updateOdonto.setApellido(odonto.getApellido());
-        updateOdonto.setTelefono(odonto.getTelefono());
-        updateOdonto.setDireccion(odonto.getDireccion());
-        updateOdonto.setFechaNacimiento(odonto.getFechaNacimiento());
-        updateOdonto.setEspecialidad(odonto.getEspecialidad());
-        updateOdonto.setHorario(odonto.getHorario());
-        updateOdonto.setUser(odonto.getUser());
+        updateOdonto.setNombre(requestDto.getNombre());
+        updateOdonto.setApellido(requestDto.getApellido());
+        updateOdonto.setTelefono(requestDto.getTelefono());
+        updateOdonto.setDireccion(requestDto.getDireccion());
+        updateOdonto.setFechaNacimiento(requestDto.getFechaNacimiento());
+        updateOdonto.setEspecialidad(requestDto.getEspecialidad());
+
+        if (!updateOdonto.getUser().getIdUsuario().equals(requestDto.getUserId())) {
+            Usuario user = usuarioService.findById(requestDto.getUserId());
+            updateOdonto.setUser(user);
+        }
+
+        if (!updateOdonto.getHorario().getIdHorario().equals(requestDto.getHorarioId())) {
+            Horario hora = horarioService.findById(requestDto.getHorarioId());
+            updateOdonto.setHorario(hora);
+        }
 
         return odontologoRepository.save(updateOdonto);
     }

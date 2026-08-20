@@ -1,12 +1,11 @@
 package com.clinicaOdonto.Clinica.domain;
 
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -18,7 +17,7 @@ public class Odontologo extends Persona{
     private String especialidad;
 
     @OneToMany(mappedBy = "odonto")
-    private List<Turno> listaTurnos;
+    private Set<Turno> listaTurnos = new HashSet<>();
 
     @OneToOne
     private Usuario user;
