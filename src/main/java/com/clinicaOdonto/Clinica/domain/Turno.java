@@ -11,7 +11,7 @@ public class Turno {
 
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY)
-    private long idTurno;
+    private Long idTurno;
 
     @Column(nullable = false)
     private LocalDate fechaTurno;

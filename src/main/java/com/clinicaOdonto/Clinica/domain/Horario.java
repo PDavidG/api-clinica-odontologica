@@ -10,7 +10,7 @@ public class Horario {
 
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY)
-    private long idHorario;
+    private Long idHorario;
 
     @Column(nullable = false)
     private String horarioInicio;
