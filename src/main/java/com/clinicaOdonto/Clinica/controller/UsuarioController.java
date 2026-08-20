@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -21,13 +22,19 @@ public class UsuarioController {
     private final IUsuarioService usuarioService;
 
     @GetMapping
-    public ResponseEntity<List<Usuario>> obtenerUsuarios() {
-        return ResponseEntity.ok(usuarioService.findAll());
+    public ResponseEntity<List<UsuarioResponseDto>> obtenerUsuarios() {
+        List<UsuarioResponseDto> listaUsu = usuarioService.findAll()
+                .stream()
+                .map(UsuarioMapper::toDto)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(listaUsu);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Usuario> obtenerUsuario(@PathVariable long id) {
-        return ResponseEntity.ok(usuarioService.findById(id));
+    public ResponseEntity<UsuarioResponseDto> obtenerUsuario(@PathVariable long id) {
+        Usuario user = usuarioService.findById(id);
+        UsuarioResponseDto responseDto = UsuarioMapper.toDto(user);
+        return ResponseEntity.ok(responseDto);
     }
 
     @PostMapping
