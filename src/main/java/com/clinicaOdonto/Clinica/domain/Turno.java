@@ -2,8 +2,7 @@ package com.clinicaOdonto.Clinica.domain;
 
 import jakarta.persistence.*;
 import lombok.Data;
-
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 @Entity
@@ -15,7 +14,7 @@ public class Turno {
     private long idTurno;
 
     @Column(nullable = false)
-    private Date fechaTurno;
+    private LocalDate fechaTurno;
 
     @Column(nullable = false)
     private String horaTurno;
