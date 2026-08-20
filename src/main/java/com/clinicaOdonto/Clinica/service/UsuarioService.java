@@ -1,7 +1,9 @@
 package com.clinicaOdonto.Clinica.service;
 
 import com.clinicaOdonto.Clinica.domain.Usuario;
+import com.clinicaOdonto.Clinica.dto.UsuarioRequestDto;
 import com.clinicaOdonto.Clinica.exception.ResourceNotFoundException;
+import com.clinicaOdonto.Clinica.mapper.UsuarioMapper;
 import com.clinicaOdonto.Clinica.repository.UsuarioRespository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,8 +17,9 @@ public class UsuarioService implements IUsuarioService {
     private final UsuarioRespository usuarioRespository;
 
     @Override
-    public Usuario saveUser(Usuario usuario) {
-        return usuarioRespository.save(usuario);
+    public Usuario saveUser(UsuarioRequestDto usuario) {
+        Usuario user = UsuarioMapper.toEntity(usuario);
+        return usuarioRespository.save(user);
     }
 
     @Override
@@ -37,10 +40,14 @@ public class UsuarioService implements IUsuarioService {
     }
 
     @Override
-    public Usuario updateUser(Long id, Usuario user) {
+    public Usuario updateUser(Long id, UsuarioRequestDto requestDto) {
+
+        Usuario user = UsuarioMapper.toEntity(requestDto);
+
         Usuario updateUser = usuarioRespository.findById(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("No se encontrol al usuario con el id: " + id));
+
         updateUser.setUsername(user.getUsername());
         updateUser.setPassword(user.getPassword());
         updateUser.setRol(user.getRol());
