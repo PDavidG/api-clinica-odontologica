@@ -1,6 +1,7 @@
 package com.clinicaOdonto.Clinica.controller;
 
 import com.clinicaOdonto.Clinica.domain.Horario;
+import com.clinicaOdonto.Clinica.dto.HorarioRequestDto;
 import com.clinicaOdonto.Clinica.service.IHorarioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,14 +28,14 @@ public class HorarioController {
     }
 
     @PostMapping
-    public ResponseEntity<Horario> crearHorario(@RequestBody Horario horario) {
-        Horario createHorario = horarioService.save(horario);
+    public ResponseEntity<Horario> crearHorario(@RequestBody HorarioRequestDto horarioRequest) {
+        Horario createHorario = horarioService.save(horarioRequest);
         return new ResponseEntity<>(createHorario, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Horario> updateHorario(@PathVariable Long id, @RequestBody Horario horario) {
-        Horario updatedHorario = horarioService.update(id, horario);
+    public ResponseEntity<Horario> updateHorario(@PathVariable Long id, @RequestBody HorarioRequestDto horarioRequest) {
+        Horario updatedHorario = horarioService.update(id, horarioRequest);
         return ResponseEntity.ok(updatedHorario);
     }
 

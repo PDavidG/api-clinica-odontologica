@@ -1,7 +1,9 @@
 package com.clinicaOdonto.Clinica.service;
 
 import com.clinicaOdonto.Clinica.domain.Horario;
+import com.clinicaOdonto.Clinica.dto.HorarioRequestDto;
 import com.clinicaOdonto.Clinica.exception.ResourceNotFoundException;
+import com.clinicaOdonto.Clinica.mapper.HorarioMapper;
 import com.clinicaOdonto.Clinica.repository.HorarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,8 +17,9 @@ public class HorarioService implements IHorarioService{
     private final HorarioRepository horarioRepository;
 
     @Override
-    public Horario save(Horario horario) {
-        return horarioRepository.save(horario);
+    public Horario save(HorarioRequestDto horarioRequest) {
+        Horario hora = HorarioMapper.toEntity(horarioRequest);
+        return horarioRepository.save(hora);
     }
 
     @Override
@@ -37,7 +40,7 @@ public class HorarioService implements IHorarioService{
     }
 
     @Override
-    public Horario update(Long id, Horario horario) {
+    public Horario update(Long id, HorarioRequestDto horario) {
 
         Horario updateHora = horarioRepository.findById(id)
                 .orElseThrow(() ->
