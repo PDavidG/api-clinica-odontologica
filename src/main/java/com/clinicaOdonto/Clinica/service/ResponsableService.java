@@ -1,7 +1,9 @@
 package com.clinicaOdonto.Clinica.service;
 
 import com.clinicaOdonto.Clinica.domain.Responsable;
+import com.clinicaOdonto.Clinica.dto.ResponsableDto;
 import com.clinicaOdonto.Clinica.exception.ResourceNotFoundException;
+import com.clinicaOdonto.Clinica.mapper.ResponsableMapper;
 import com.clinicaOdonto.Clinica.repository.ResponsableRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,8 +17,9 @@ public class ResponsableService implements IResponsableService{
     private final ResponsableRepository responsableRepository;
 
     @Override
-    public Responsable save(Responsable resp) {
-        return responsableRepository.save(resp);
+    public Responsable save(ResponsableDto resp) {
+        Responsable respon = ResponsableMapper.toEntity(resp);
+        return responsableRepository.save(respon);
     }
 
     @Override
@@ -37,7 +40,7 @@ public class ResponsableService implements IResponsableService{
     }
 
     @Override
-    public Responsable update(Long id, Responsable resp) {
+    public Responsable update(Long id, ResponsableDto resp) {
         Responsable respons = responsableRepository.findById(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("No se encontro el responsable con el id: " + id));

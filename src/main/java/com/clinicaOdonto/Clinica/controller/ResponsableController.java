@@ -1,13 +1,17 @@
 package com.clinicaOdonto.Clinica.controller;
 
 import com.clinicaOdonto.Clinica.domain.Responsable;
+import com.clinicaOdonto.Clinica.dto.ResponsableDto;
+import com.clinicaOdonto.Clinica.mapper.ResponsableMapper;
 import com.clinicaOdonto.Clinica.service.IResponsableService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,24 +21,29 @@ public class ResponsableController {
     private final IResponsableService responsableService;
 
     @GetMapping
-    public ResponseEntity<List<Responsable>> showResponsables() {
-        return ResponseEntity.ok(responsableService.findAll());
+    public ResponseEntity<List<ResponsableDto>> showResponsables() {
+        List<ResponsableDto> listaResponsablesDtos = responsableService.findAll()
+                                                    .stream()
+                                                    .map(ResponsableMapper::toDto)
+                                                    .collect(Collectors.toList());
+        return ResponseEntity.ok(listaResponsablesDtos);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Responsable> showResponsable(@PathVariable Long id) {
-        return ResponseEntity.ok(responsableService.findById(id));
+    public ResponseEntity<ResponsableDto> showResponsable(@PathVariable Long id) {
+        return ResponseEntity.ok(ResponsableMapper.toDto(responsableService.findById(id)));
     }
 
     @PostMapping
-    public ResponseEntity<Responsable> createResponsable(@RequestBody Responsable resp) {
-        return new ResponseEntity<>(responsableService.save(resp), HttpStatus.CREATED);
+    public ResponseEntity<ResponsableDto> createResponsable(@Valid @RequestBody ResponsableDto resp) {
+        Responsable respon = responsableService.save(resp);
+        return new ResponseEntity<>(ResponsableMapper.toDto(respon), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Responsable> updateResponsable(@PathVariable Long id, @RequestBody Responsable resp) {
+    public ResponseEntity<ResponsableDto> updateResponsable(@PathVariable Long id, @Valid @RequestBody ResponsableDto resp) {
         Responsable respon = responsableService.update(id, resp);
-        return ResponseEntity.ok(respon);
+        return ResponseEntity.ok(ResponsableMapper.toDto(respon));
     }
 
     @DeleteMapping("/{id}")
