@@ -2,9 +2,10 @@ package com.clinicaOdonto.Clinica.service;
 
 import com.clinicaOdonto.Clinica.domain.Paciente;
 import com.clinicaOdonto.Clinica.domain.Responsable;
+import com.clinicaOdonto.Clinica.dto.PacienteDto;
 import com.clinicaOdonto.Clinica.exception.ResourceNotFoundException;
+import com.clinicaOdonto.Clinica.mapper.PacienteMapper;
 import com.clinicaOdonto.Clinica.repository.PacienteRepository;
-import com.clinicaOdonto.Clinica.repository.ResponsableRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,21 +16,20 @@ import java.util.List;
 public class PacienteService implements IPacienteService{
 
     private final PacienteRepository pacienteRepository;
-    private final ResponsableRepository responsableRepository;
+    private final IResponsableService responsableService;
 
     @Override
-    public Paciente save(Paciente pacient) {
+    public Paciente save(PacienteDto requestDto) {
 
-        if (pacient.getResp() != null) {
-            Responsable resp = responsableRepository.findById(pacient.getResp().getId())
-                    .orElseThrow(() ->
-                            new ResourceNotFoundException("No se encontro al reponsable con el id: "+
-                                    (pacient.getResp().getId())));
+        System.out.println("El paciente es: "+ requestDto.toString());
 
-            pacient.setResp(resp);
+        Paciente paciente = PacienteMapper.toEntity(requestDto);
+
+        if (requestDto.getResponsableId() != null) {
+            Responsable resp = responsableService.findById(requestDto.getResponsableId());
+            paciente.setResp(resp);
         }
-
-        return pacienteRepository.save(pacient);
+        return pacienteRepository.save(paciente);
     }
 
     @Override
@@ -50,25 +50,16 @@ public class PacienteService implements IPacienteService{
     }
 
     @Override
-    public Paciente update(Long id, Paciente pacient) {
+    public Paciente update(Long id, PacienteDto requestDto) {
         Paciente updatePaciente = pacienteRepository.findById(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("No existe el paciente con el id: " + id));
 
-        updatePaciente.setNombre(pacient.getNombre());
-        updatePaciente.setApellido(pacient.getApellido());
-        updatePaciente.setTelefono(pacient.getTelefono());
-        updatePaciente.setDireccion(pacient.getDireccion());
-        updatePaciente.setFechaNacimiento(pacient.getFechaNacimiento());
-        updatePaciente.setTieneOs(pacient.isTieneOs());
-        updatePaciente.setTipoSangre(pacient.getTipoSangre());
+        Paciente updatePacien = PacienteMapper.updatePacienteFromDto(updatePaciente, requestDto);
 
-        if (pacient.getResp() != null) {
-            Responsable resp = responsableRepository.findById(pacient.getResp().getId())
-                    .orElseThrow(() ->
-                            new ResourceNotFoundException("No se encontro el responsable con el id: " +
-                                    pacient.getResp().getId()));
-            updatePaciente.setResp(resp);
+        if (requestDto.getResponsableId() != null) {
+            Responsable resp = responsableService.findById(requestDto.getResponsableId());
+            updatePacien.setResp(resp);
         }
         return pacienteRepository.save(updatePaciente);
     }
