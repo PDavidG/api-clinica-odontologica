@@ -2,6 +2,7 @@ package com.clinicaOdonto.Clinica.mapper;
 
 import com.clinicaOdonto.Clinica.domain.Paciente;
 import com.clinicaOdonto.Clinica.dto.PacienteDto;
+import com.clinicaOdonto.Clinica.dto.PacienteSummaryDto;
 
 public interface PacienteMapper {
 
@@ -59,5 +60,18 @@ public interface PacienteMapper {
         paciente.setTipoSangre(requestDto.getTipoSangre());
 
         return paciente;
+    }
+
+    public static PacienteSummaryDto toSummaryDto(Paciente paciente) {
+
+        if (paciente == null) {
+            return null;
+        }
+
+        PacienteSummaryDto pacient = new PacienteSummaryDto();
+        pacient.setNombre(paciente.getNombre());
+        pacient.setApellido(paciente.getApellido());
+
+        return pacient;
     }
 }

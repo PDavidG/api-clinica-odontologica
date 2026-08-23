@@ -3,6 +3,7 @@ package com.clinicaOdonto.Clinica.mapper;
 import com.clinicaOdonto.Clinica.domain.Odontologo;
 import com.clinicaOdonto.Clinica.dto.OdontologoRequestDto;
 import com.clinicaOdonto.Clinica.dto.OdontologoResponseDto;
+import com.clinicaOdonto.Clinica.dto.OdontologoSummaryDto;
 
 public interface OdontologoMapper {
 
@@ -41,5 +42,21 @@ public interface OdontologoMapper {
         odonto.setEspecialidad(requestDto.getEspecialidad());
 
         return odonto;
+    }
+
+    public static OdontologoSummaryDto toSummaryDto(Odontologo odonto) {
+
+        if (odonto == null) {
+            return null;
+        }
+
+        OdontologoSummaryDto odontoSummary = new OdontologoSummaryDto();
+        odontoSummary.setNombre(odonto.getNombre());
+        odontoSummary.setApellido(odonto.getApellido());
+        odontoSummary.setEspecialidad(odonto.getEspecialidad());
+        odontoSummary.setHorarioInicio(odonto.getHorario().getHorarioInicio());
+        odontoSummary.setHorarioFin(odonto.getHorario().getHorarioFin());
+
+        return odontoSummary;
     }
 }
