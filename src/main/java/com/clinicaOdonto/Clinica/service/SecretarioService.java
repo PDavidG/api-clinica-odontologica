@@ -2,9 +2,10 @@ package com.clinicaOdonto.Clinica.service;
 
 import com.clinicaOdonto.Clinica.domain.Secretario;
 import com.clinicaOdonto.Clinica.domain.Usuario;
+import com.clinicaOdonto.Clinica.dto.SecretarioDto;
 import com.clinicaOdonto.Clinica.exception.ResourceNotFoundException;
+import com.clinicaOdonto.Clinica.mapper.SecretarioMapper;
 import com.clinicaOdonto.Clinica.repository.SecretarioRepository;
-import com.clinicaOdonto.Clinica.repository.UsuarioRespository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -14,16 +15,15 @@ import java.util.List;
 public class SecretarioService implements ISecretarioService{
 
     private final SecretarioRepository secretarioRepository;
-    private final UsuarioRespository usuarioRespository;
+    private final IUsuarioService usuarioService;
 
     @Override
-    public Secretario save(Secretario secret) {
+    public Secretario save(SecretarioDto requesDto) {
 
-        if (secret.getUser() != null) {
-            Usuario user = usuarioRespository.findById(secret.getUser().getIdUsuario())
-                    .orElseThrow(() ->
-                            new ResourceNotFoundException("No se encontro al usuario con el id: "+
-                                    secret.getUser().getIdUsuario()));
+        Secretario secret = SecretarioMapper.toEntity(requesDto);
+
+        if (requesDto.getUserId() != null) {
+            Usuario user = usuarioService.findById(requesDto.getUserId());
             secret.setUser(user);
         }
 
@@ -48,24 +48,16 @@ public class SecretarioService implements ISecretarioService{
     }
 
     @Override
-    public Secretario update(Long id, Secretario secret) {
+    public Secretario update(Long id, SecretarioDto requestDto) {
 
-        Secretario updateSecret = secretarioRepository.findById(id)
+        Secretario secret = secretarioRepository.findById(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("No se encontro al secretario con el id: "+ id));
 
-        updateSecret.setNombre(secret.getNombre());
-        updateSecret.setApellido(secret.getApellido());
-        updateSecret.setTelefono(secret.getTelefono());
-        updateSecret.setDireccion(secret.getDireccion());
-        updateSecret.setFechaNacimiento(secret.getFechaNacimiento());
-        updateSecret.setSector(secret.getSector());
+        Secretario updateSecret = SecretarioMapper.updateSecretarioFromDto(secret, requestDto);
 
-        if (secret.getUser() != null) {
-            Usuario user = usuarioRespository.findById(secret.getUser().getIdUsuario())
-                    .orElseThrow(() ->
-                            new ResourceNotFoundException("No se encontro al usuario con el id: "+
-                                    secret.getUser().getIdUsuario()));
+        if (requestDto.getUserId() != null) {
+            Usuario user = usuarioService.findById(requestDto.getUserId());
             updateSecret.setUser(user);
         }
 
