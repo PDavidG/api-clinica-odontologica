@@ -3,9 +3,9 @@ package com.clinicaOdonto.Clinica.service;
 import com.clinicaOdonto.Clinica.domain.Odontologo;
 import com.clinicaOdonto.Clinica.domain.Paciente;
 import com.clinicaOdonto.Clinica.domain.Turno;
+import com.clinicaOdonto.Clinica.dto.TurnoRequestDto;
 import com.clinicaOdonto.Clinica.exception.ResourceNotFoundException;
-import com.clinicaOdonto.Clinica.repository.OdontologoRepository;
-import com.clinicaOdonto.Clinica.repository.PacienteRepository;
+import com.clinicaOdonto.Clinica.mapper.TurnoMapper;
 import com.clinicaOdonto.Clinica.repository.TurnoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,26 +16,22 @@ import java.util.List;
 public class TurnoService implements ITurnoService{
 
     private final TurnoRepository turnoRepository;
-    private final PacienteRepository pacienteRepository;
-    private final OdontologoRepository odontologoRepository;
+    private final IPacienteService pacienteService;
+    private final IOdontologoService odontologoService;
 
     @Override
-    public Turno save(Turno turno) {
+    public Turno save(TurnoRequestDto requestDto) {
 
-        if (turno.getPacien() != null) {
-            Paciente paciente = pacienteRepository.findById(turno.getPacien().getId())
-                    .orElseThrow(() ->
-                            new ResourceNotFoundException("No existe el paciente con el id: " + turno.getPacien().getId()));
+        Turno turno = TurnoMapper.toEntity(requestDto);
 
-            turno.setPacien(paciente);
+        if (requestDto.getPacienteId() != null) {
+            Paciente pacient = pacienteService.findById(requestDto.getPacienteId());
+            turno.setPacien(pacient);
         }
 
-        if (turno.getOdonto() != null) {
-            Odontologo odonto = odontologoRepository.findById(turno.getOdonto().getId())
-                    .orElseThrow(() ->
-                            new ResourceNotFoundException("No existe el odontologo con el turno: " + turno.getOdonto().getId()));
-
-            turno.setOdonto(odonto);
+        if (requestDto.getOdontologoId() != null) {
+            Odontologo odon = odontologoService.findById(requestDto.getOdontologoId());
+            turno.setOdonto(odon);
         }
 
         return turnoRepository.save(turno);
@@ -59,30 +55,24 @@ public class TurnoService implements ITurnoService{
     }
 
     @Override
-    public Turno update(Long id, Turno turno) {
-        Turno updateTurno = turnoRepository.findById(id)
+    public Turno update(Long id, TurnoRequestDto requestDto) {
+        Turno turno = turnoRepository.findById(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("No se encontro el turno con el id: " + id));
 
-        updateTurno.setFechaTurno(turno.getFechaTurno());
-        updateTurno.setHoraTurno(turno.getHoraTurno());
-        updateTurno.setAfeccion(turno.getAfeccion());
+        Turno updateTurno = TurnoMapper.updateTurnoFromDto(turno, requestDto);
 
-        if (turno.getPacien() != null) {
-            Paciente paciente = pacienteRepository.findById(turno.getPacien().getId())
-                    .orElseThrow(() ->
-                            new ResourceNotFoundException("No existe el paciente con el id: " + turno.getPacien().getId()));
-
-            updateTurno.setPacien(paciente);
+        if (requestDto.getPacienteId() != null) {
+            Paciente pacient = pacienteService.findById(requestDto.getPacienteId());
+            updateTurno.setPacien(pacient);
         }
 
-        if (turno.getOdonto() != null) {
-            Odontologo odonto = odontologoRepository.findById(turno.getOdonto().getId())
-                    .orElseThrow(() ->
-                            new ResourceNotFoundException("No existe el odontologo con el turno: " + turno.getOdonto().getId()));
-
+        if (requestDto.getOdontologoId() != null) {
+            Odontologo odonto = odontologoService.findById(requestDto.getOdontologoId());
             updateTurno.setOdonto(odonto);
         }
+        turnoRepository.save(updateTurno);
+
         return updateTurno;
     }
 }

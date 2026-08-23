@@ -1,13 +1,16 @@
 package com.clinicaOdonto.Clinica.controller;
 
 import com.clinicaOdonto.Clinica.domain.Turno;
+import com.clinicaOdonto.Clinica.dto.TurnoRequestDto;
+import com.clinicaOdonto.Clinica.dto.TurnoResponseDto;
+import com.clinicaOdonto.Clinica.mapper.TurnoMapper;
 import com.clinicaOdonto.Clinica.service.ITurnoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,25 +20,30 @@ public class TurnoController {
     private final ITurnoService turnoService;
 
     @GetMapping
-    public ResponseEntity<List<Turno>> showTurns() {
-        return ResponseEntity.ok(turnoService.findAll());
+    public ResponseEntity<List<TurnoResponseDto>> showTurns() {
+        List<TurnoResponseDto> listaTurnos = turnoService.findAll()
+                .stream()
+                .map(TurnoMapper::toDto)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(listaTurnos);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Turno> showTurn(@PathVariable Long id) {
-        return ResponseEntity.ok(turnoService.findById(id));
+    public ResponseEntity<TurnoResponseDto> showTurn(@PathVariable Long id) {
+        Turno turno = turnoService.findById(id);
+        return ResponseEntity.ok(TurnoMapper.toDto(turno));
     }
 
     @PostMapping
-    public ResponseEntity<Turno> createTurn(@RequestBody Turno turn) {
-        Turno saveTurno = turnoService.save(turn);
-        return new ResponseEntity<>(saveTurno, HttpStatus.CREATED);
+    public ResponseEntity<TurnoResponseDto> createTurn(@RequestBody TurnoRequestDto requestDto) {
+        Turno saveTurno = turnoService.save(requestDto);
+        return new ResponseEntity<>(TurnoMapper.toDto(saveTurno), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Turno> updateTurn(@PathVariable Long id, @RequestBody Turno turn) {
-        Turno updateTurno = turnoService.update(id, turn);
-        return ResponseEntity.ok(updateTurno);
+    public ResponseEntity<TurnoResponseDto> updateTurn(@PathVariable Long id, @RequestBody TurnoRequestDto requestDto) {
+        Turno updateTurno = turnoService.update(id, requestDto);
+        return ResponseEntity.ok(TurnoMapper.toDto(updateTurno));
     }
 
     @DeleteMapping("/{id}")
