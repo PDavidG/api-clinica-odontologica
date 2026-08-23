@@ -5,6 +5,7 @@ import com.clinicaOdonto.Clinica.dto.TurnoRequestDto;
 import com.clinicaOdonto.Clinica.dto.TurnoResponseDto;
 import com.clinicaOdonto.Clinica.mapper.TurnoMapper;
 import com.clinicaOdonto.Clinica.service.ITurnoService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,13 +36,13 @@ public class TurnoController {
     }
 
     @PostMapping
-    public ResponseEntity<TurnoResponseDto> createTurn(@RequestBody TurnoRequestDto requestDto) {
+    public ResponseEntity<TurnoResponseDto> createTurn(@Valid @RequestBody TurnoRequestDto requestDto) {
         Turno saveTurno = turnoService.save(requestDto);
         return new ResponseEntity<>(TurnoMapper.toDto(saveTurno), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TurnoResponseDto> updateTurn(@PathVariable Long id, @RequestBody TurnoRequestDto requestDto) {
+    public ResponseEntity<TurnoResponseDto> updateTurn(@PathVariable Long id, @Valid @RequestBody TurnoRequestDto requestDto) {
         Turno updateTurno = turnoService.update(id, requestDto);
         return ResponseEntity.ok(TurnoMapper.toDto(updateTurno));
     }
