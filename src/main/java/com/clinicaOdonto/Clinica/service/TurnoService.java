@@ -9,6 +9,8 @@ import com.clinicaOdonto.Clinica.mapper.TurnoMapper;
 import com.clinicaOdonto.Clinica.repository.TurnoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 @Service
@@ -20,6 +22,7 @@ public class TurnoService implements ITurnoService{
     private final IOdontologoService odontologoService;
 
     @Override
+    @Transactional
     public Turno save(TurnoRequestDto requestDto) {
 
         Turno turno = TurnoMapper.toEntity(requestDto);
@@ -38,11 +41,13 @@ public class TurnoService implements ITurnoService{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Turno> findAll() {
         return turnoRepository.findAll();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Turno findById(Long id) {
         return turnoRepository.findById(id)
                 .orElseThrow(() ->
@@ -50,11 +55,13 @@ public class TurnoService implements ITurnoService{
     }
 
     @Override
+    @Transactional
     public void deleteById(Long id) {
         turnoRepository.deleteById(id);
     }
 
     @Override
+    @Transactional
     public Turno update(Long id, TurnoRequestDto requestDto) {
         Turno turno = turnoRepository.findById(id)
                 .orElseThrow(() ->

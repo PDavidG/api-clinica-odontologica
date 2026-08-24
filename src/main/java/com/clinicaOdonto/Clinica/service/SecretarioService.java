@@ -8,6 +8,8 @@ import com.clinicaOdonto.Clinica.mapper.SecretarioMapper;
 import com.clinicaOdonto.Clinica.repository.SecretarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 @Service
@@ -18,6 +20,7 @@ public class SecretarioService implements ISecretarioService{
     private final IUsuarioService usuarioService;
 
     @Override
+    @Transactional
     public Secretario save(SecretarioDto requesDto) {
 
         Secretario secret = SecretarioMapper.toEntity(requesDto);
@@ -31,11 +34,13 @@ public class SecretarioService implements ISecretarioService{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Secretario> findAll() {
         return secretarioRepository.findAll();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Secretario findById(Long id) {
         return secretarioRepository.findById(id)
                 .orElseThrow(() ->
@@ -43,11 +48,13 @@ public class SecretarioService implements ISecretarioService{
     }
 
     @Override
+    @Transactional
     public void deleteById(Long id) {
         secretarioRepository.deleteById(id);
     }
 
     @Override
+    @Transactional
     public Secretario update(Long id, SecretarioDto requestDto) {
 
         Secretario secret = secretarioRepository.findById(id)

@@ -7,6 +7,7 @@ import com.clinicaOdonto.Clinica.mapper.ResponsableMapper;
 import com.clinicaOdonto.Clinica.repository.ResponsableRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -17,17 +18,20 @@ public class ResponsableService implements IResponsableService{
     private final ResponsableRepository responsableRepository;
 
     @Override
+    @Transactional
     public Responsable save(ResponsableDto resp) {
         Responsable respon = ResponsableMapper.toEntity(resp);
         return responsableRepository.save(respon);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Responsable> findAll() {
         return responsableRepository.findAll();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Responsable findById(Long id) {
         return responsableRepository.findById(id)
                 .orElseThrow(() ->
@@ -35,11 +39,13 @@ public class ResponsableService implements IResponsableService{
     }
 
     @Override
+    @Transactional
     public void deleteById(Long id) {
         responsableRepository.deleteById(id);
     }
 
     @Override
+    @Transactional
     public Responsable update(Long id, ResponsableDto resp) {
         Responsable respons = responsableRepository.findById(id)
                 .orElseThrow(() ->

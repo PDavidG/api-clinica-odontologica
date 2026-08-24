@@ -9,6 +9,8 @@ import com.clinicaOdonto.Clinica.mapper.OdontologoMapper;
 import com.clinicaOdonto.Clinica.repository.OdontologoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 @Service
@@ -20,6 +22,7 @@ public class OdontologoService implements IOdontologoService{
     private final IHorarioService horarioService;
 
     @Override
+    @Transactional
     public Odontologo save(OdontologoRequestDto requestDto) {
 
         Odontologo odontologo = OdontologoMapper.toEntity(requestDto);
@@ -33,11 +36,13 @@ public class OdontologoService implements IOdontologoService{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Odontologo> findAll() {
         return odontologoRepository.findAll();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Odontologo findById(Long id) {
         return odontologoRepository.findById(id)
                 .orElseThrow(  () ->
@@ -46,11 +51,13 @@ public class OdontologoService implements IOdontologoService{
     }
 
     @Override
+    @Transactional
     public void deleteById(Long id) {
         odontologoRepository.deleteById(id);
     }
 
     @Override
+    @Transactional
     public Odontologo update(Long id, OdontologoRequestDto requestDto) {
         Odontologo updateOdonto = odontologoRepository.findById(id)
                 .orElseThrow(() ->

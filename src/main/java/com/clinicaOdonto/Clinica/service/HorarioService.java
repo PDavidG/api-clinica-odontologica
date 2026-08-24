@@ -7,6 +7,7 @@ import com.clinicaOdonto.Clinica.mapper.HorarioMapper;
 import com.clinicaOdonto.Clinica.repository.HorarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -17,17 +18,20 @@ public class HorarioService implements IHorarioService{
     private final HorarioRepository horarioRepository;
 
     @Override
+    @Transactional
     public Horario save(HorarioRequestDto horarioRequest) {
         Horario hora = HorarioMapper.toEntity(horarioRequest);
         return horarioRepository.save(hora);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Horario> findAll() {
         return horarioRepository.findAll();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Horario findById(Long idHorario) {
         return horarioRepository.findById(idHorario)
                 .orElseThrow( () ->
@@ -35,11 +39,13 @@ public class HorarioService implements IHorarioService{
     }
 
     @Override
+    @Transactional
     public void deleteById(Long idHorario) {
         horarioRepository.deleteById(idHorario);
     }
 
     @Override
+    @Transactional
     public Horario update(Long id, HorarioRequestDto horario) {
 
         Horario updateHora = horarioRepository.findById(id)

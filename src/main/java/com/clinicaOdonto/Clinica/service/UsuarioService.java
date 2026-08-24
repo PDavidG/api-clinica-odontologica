@@ -7,6 +7,7 @@ import com.clinicaOdonto.Clinica.mapper.UsuarioMapper;
 import com.clinicaOdonto.Clinica.repository.UsuarioRespository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -17,17 +18,20 @@ public class UsuarioService implements IUsuarioService {
     private final UsuarioRespository usuarioRespository;
 
     @Override
+    @Transactional
     public Usuario saveUser(UsuarioRequestDto usuario) {
         Usuario user = UsuarioMapper.toEntity(usuario);
         return usuarioRespository.save(user);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Usuario> findAll() {
         return usuarioRespository.findAll();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Usuario findById(long idUsuario) {
         return usuarioRespository.findById(idUsuario)
                 .orElseThrow( () ->
@@ -35,11 +39,13 @@ public class UsuarioService implements IUsuarioService {
     }
 
     @Override
+    @Transactional
     public void deleteById(long idUsuario) {
         usuarioRespository.deleteById(idUsuario);
     }
 
     @Override
+    @Transactional
     public Usuario updateUser(Long id, UsuarioRequestDto requestDto) {
 
         Usuario user = UsuarioMapper.toEntity(requestDto);

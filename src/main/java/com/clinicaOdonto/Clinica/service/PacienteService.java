@@ -8,6 +8,7 @@ import com.clinicaOdonto.Clinica.mapper.PacienteMapper;
 import com.clinicaOdonto.Clinica.repository.PacienteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -19,9 +20,8 @@ public class PacienteService implements IPacienteService{
     private final IResponsableService responsableService;
 
     @Override
+    @Transactional
     public Paciente save(PacienteDto requestDto) {
-
-        System.out.println("El paciente es: "+ requestDto.toString());
 
         Paciente paciente = PacienteMapper.toEntity(requestDto);
 
@@ -33,11 +33,13 @@ public class PacienteService implements IPacienteService{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Paciente> findAll() {
         return pacienteRepository.findAll();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Paciente findById(Long id) {
         return pacienteRepository.findById(id)
                 .orElseThrow(() ->
@@ -45,11 +47,13 @@ public class PacienteService implements IPacienteService{
     }
 
     @Override
+    @Transactional
     public void deleteById(Long id) {
         pacienteRepository.deleteById(id);
     }
 
     @Override
+    @Transactional
     public Paciente update(Long id, PacienteDto requestDto) {
         Paciente updatePaciente = pacienteRepository.findById(id)
                 .orElseThrow(() ->
