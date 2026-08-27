@@ -1,4 +1,4 @@
-package com.clinicaOdonto.Clinica.config;
+package com.clinicaOdonto.Clinica.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
