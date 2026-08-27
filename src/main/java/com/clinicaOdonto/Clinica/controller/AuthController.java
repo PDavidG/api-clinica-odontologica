@@ -1,9 +1,9 @@
 package com.clinicaOdonto.Clinica.controller;
 
+import com.clinicaOdonto.Clinica.dto.JwtResponseAuthDto;
 import com.clinicaOdonto.Clinica.dto.LoginDto;
-import com.clinicaOdonto.Clinica.dto.UsuarioRequestDto;
+import com.clinicaOdonto.Clinica.security.jwt.JwtGenerator;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,9 +20,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
+    private final JwtGenerator jwtGenerator;
 
     @PostMapping("/login")
-    public ResponseEntity<String> authenticateUser(@RequestBody LoginDto loginDto) {
+    public ResponseEntity<JwtResponseAuthDto> authenticateUser(@RequestBody LoginDto loginDto) {
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword())
@@ -30,7 +31,9 @@ public class AuthController {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        return ResponseEntity.ok("Usuario autenticado correctamente");
+        String token = jwtGenerator.generateToken(authentication);
+
+        return ResponseEntity.ok(new JwtResponseAuthDto(token));
 
     }
 }
