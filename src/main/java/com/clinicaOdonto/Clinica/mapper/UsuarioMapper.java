@@ -14,7 +14,6 @@ public interface UsuarioMapper {
 
         UsuarioResponseDto userDto = new UsuarioResponseDto();
         userDto.setUsername(user.getUsername());
-        userDto.setRol(user.getRol());
         return userDto;
     }
 
@@ -27,7 +26,6 @@ public interface UsuarioMapper {
         Usuario user = new Usuario();
         user.setUsername(requestDto.getUsername());
         user.setPassword(requestDto.getPassword());
-        user.setRol(requestDto.getRol());
         return user;
     }
 }

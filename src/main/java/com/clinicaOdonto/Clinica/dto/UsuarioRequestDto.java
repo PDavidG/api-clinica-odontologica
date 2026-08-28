@@ -2,8 +2,11 @@ package com.clinicaOdonto.Clinica.dto;
 
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+
+import java.util.Set;
 
 @Data
 public class UsuarioRequestDto {
@@ -15,6 +18,6 @@ public class UsuarioRequestDto {
     @Size(min= 6, max = 10, message = "La contraseña debe tener entre 6 y 10 caracteres")
     private String password;
 
-    @NotBlank(message = "El rol no puede estar vacio")
-    private String rol;
+    @NotNull(message = "El campo roleIds no puede ser nulo")
+    private Set<Long> roleIds;
 }
