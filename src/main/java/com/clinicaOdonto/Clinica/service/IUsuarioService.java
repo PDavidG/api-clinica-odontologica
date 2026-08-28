@@ -6,7 +6,6 @@ import com.clinicaOdonto.Clinica.dto.UsuarioRequestDto;
 import java.util.List;
 
 public interface IUsuarioService {
-    Usuario saveUser(UsuarioRequestDto requestDto);
     List<Usuario> findAll();
     Usuario findById(long idUsuario);
     void deleteById(long idUsuario);

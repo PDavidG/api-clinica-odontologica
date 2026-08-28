@@ -31,9 +31,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if(validateTokenAndUserNoAuthenticated(token)) {
             UsernamePasswordAuthenticationToken authenticationToken = userLoggedInSpringSecurity(token);
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-
-            filterChain.doFilter(request, response);
         }
+        filterChain.doFilter(request, response);
     }
 
     private String getJwtFromRequest(HttpServletRequest request) {
