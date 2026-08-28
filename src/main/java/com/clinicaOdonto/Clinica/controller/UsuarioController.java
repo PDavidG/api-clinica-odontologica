@@ -37,13 +37,6 @@ public class UsuarioController {
         return ResponseEntity.ok(responseDto);
     }
 
-    @PostMapping
-    public ResponseEntity<UsuarioResponseDto> guardarUsuario(@Valid @RequestBody UsuarioRequestDto requestDto) {
-        Usuario user = usuarioService.saveUser(requestDto);
-        UsuarioResponseDto userResponseDto = UsuarioMapper.toDto(user);
-        return new ResponseEntity<>(userResponseDto, HttpStatus.CREATED);
-    }
-
     @PutMapping("/{id}")
     public ResponseEntity<UsuarioResponseDto> actualizarUsuario(@PathVariable long id, @Valid @RequestBody UsuarioRequestDto requestDto) {
 

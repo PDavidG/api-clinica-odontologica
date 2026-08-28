@@ -18,13 +18,6 @@ public class UsuarioService implements IUsuarioService {
     private final UsuarioRespository usuarioRespository;
 
     @Override
-    @Transactional
-    public Usuario saveUser(UsuarioRequestDto usuario) {
-        Usuario user = UsuarioMapper.toEntity(usuario);
-        return usuarioRespository.save(user);
-    }
-
-    @Override
     @Transactional(readOnly = true)
     public List<Usuario> findAll() {
         return usuarioRespository.findAll();
@@ -56,7 +49,6 @@ public class UsuarioService implements IUsuarioService {
 
         updateUser.setUsername(user.getUsername());
         updateUser.setPassword(user.getPassword());
-        updateUser.setRol(user.getRol());
 
         return usuarioRespository.save(updateUser);
     }
