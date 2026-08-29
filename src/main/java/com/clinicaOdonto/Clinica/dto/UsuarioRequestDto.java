@@ -17,7 +17,4 @@ public class UsuarioRequestDto {
     @NotBlank(message = "El password no puede estar vacio")
     @Size(min= 6, max = 10, message = "La contraseña debe tener entre 6 y 10 caracteres")
     private String password;
-
-    @NotNull(message = "El campo roleIds no puede ser nulo")
-    private Set<Long> roleIds;
 }
