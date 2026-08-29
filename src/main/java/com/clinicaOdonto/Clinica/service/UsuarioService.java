@@ -6,6 +6,7 @@ import com.clinicaOdonto.Clinica.exception.ResourceNotFoundException;
 import com.clinicaOdonto.Clinica.mapper.UsuarioMapper;
 import com.clinicaOdonto.Clinica.repository.UsuarioRespository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +17,7 @@ import java.util.List;
 public class UsuarioService implements IUsuarioService {
 
     private final UsuarioRespository usuarioRespository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional(readOnly = true)
@@ -48,7 +50,7 @@ public class UsuarioService implements IUsuarioService {
                         new ResourceNotFoundException("No se encontrol al usuario con el id: " + id));
 
         updateUser.setUsername(user.getUsername());
-        updateUser.setPassword(user.getPassword());
+        updateUser.setPassword(passwordEncoder.encode(user.getPassword()));
 
         return usuarioRespository.save(updateUser);
     }
