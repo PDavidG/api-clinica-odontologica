@@ -1,4 +1,4 @@
-package com.clinicaOdonto.Clinica.security;
+package com.clinicaOdonto.Clinica.security.config;
 
 import com.clinicaOdonto.Clinica.security.jwt.JwtAuthEntryPoint;
 import com.clinicaOdonto.Clinica.security.jwt.JwtAuthenticationFilter;

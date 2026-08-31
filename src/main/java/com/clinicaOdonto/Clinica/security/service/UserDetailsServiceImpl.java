@@ -1,4 +1,4 @@
-package com.clinicaOdonto.Clinica.service;
+package com.clinicaOdonto.Clinica.security.service;
 
 import com.clinicaOdonto.Clinica.domain.Role;
 import com.clinicaOdonto.Clinica.domain.Usuario;

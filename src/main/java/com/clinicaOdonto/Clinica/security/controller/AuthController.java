@@ -1,9 +1,9 @@
-package com.clinicaOdonto.Clinica.controller;
+package com.clinicaOdonto.Clinica.security.controller;
 
-import com.clinicaOdonto.Clinica.dto.JwtResponseAuthDto;
-import com.clinicaOdonto.Clinica.dto.LoginDto;
-import com.clinicaOdonto.Clinica.dto.UsuarioRequestDto;
-import com.clinicaOdonto.Clinica.service.AuthService;
+import com.clinicaOdonto.Clinica.security.dto.JwtResponseAuthDto;
+import com.clinicaOdonto.Clinica.security.dto.LoginDto;
+import com.clinicaOdonto.Clinica.security.dto.UsuarioRequestDto;
+import com.clinicaOdonto.Clinica.security.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

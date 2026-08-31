@@ -1,4 +1,4 @@
-package com.clinicaOdonto.Clinica.dto;
+package com.clinicaOdonto.Clinica.security.dto;
 
 import lombok.Data;
 
