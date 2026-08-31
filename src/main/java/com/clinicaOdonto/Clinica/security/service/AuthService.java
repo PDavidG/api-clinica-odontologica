@@ -1,10 +1,8 @@
-package com.clinicaOdonto.Clinica.service;
+package com.clinicaOdonto.Clinica.security.service;
 
-import com.clinicaOdonto.Clinica.domain.Role;
 import com.clinicaOdonto.Clinica.domain.Usuario;
-import com.clinicaOdonto.Clinica.dto.LoginDto;
-import com.clinicaOdonto.Clinica.dto.UsuarioRequestDto;
-import com.clinicaOdonto.Clinica.exception.ResourceNotFoundException;
+import com.clinicaOdonto.Clinica.security.dto.LoginDto;
+import com.clinicaOdonto.Clinica.security.dto.UsuarioRequestDto;
 import com.clinicaOdonto.Clinica.mapper.UsuarioMapper;
 import com.clinicaOdonto.Clinica.repository.RoleRepository;
 import com.clinicaOdonto.Clinica.repository.UsuarioRespository;
@@ -17,8 +15,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -28,6 +24,7 @@ public class AuthService {
     private final UsuarioRespository usuarioRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UsuarioMapper usuarioMapper;
 
 
     public String authenticateUsuario(LoginDto loginDto) {
@@ -45,14 +42,8 @@ public class AuthService {
             return "El nombre de usaurio ya existe";
         }
 
-        Usuario user = UsuarioMapper.toEntity(requestDto);
+        Usuario user = usuarioMapper.toEntity(requestDto);
         user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
-
-        Role roles = roleRepository.findByName("ROLE_USER")
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Error, no existe el rol de usuario: ROLE_USER"));
-
-        user.setRoles(Collections.singleton(roles));
 
         usuarioRepository.save(user);
 

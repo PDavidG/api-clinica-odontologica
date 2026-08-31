@@ -1,7 +1,7 @@
 package com.clinicaOdonto.Clinica.service;
 
 import com.clinicaOdonto.Clinica.domain.Usuario;
-import com.clinicaOdonto.Clinica.dto.UsuarioRequestDto;
+import com.clinicaOdonto.Clinica.security.dto.UsuarioRequestDto;
 
 import java.util.List;
 

@@ -1,10 +1,11 @@
-package com.clinicaOdonto.Clinica.service;
+package com.clinicaOdonto.Clinica.security.service;
 
 import com.clinicaOdonto.Clinica.domain.Usuario;
-import com.clinicaOdonto.Clinica.dto.UsuarioRequestDto;
+import com.clinicaOdonto.Clinica.security.dto.UsuarioRequestDto;
 import com.clinicaOdonto.Clinica.exception.ResourceNotFoundException;
 import com.clinicaOdonto.Clinica.mapper.UsuarioMapper;
 import com.clinicaOdonto.Clinica.repository.UsuarioRespository;
+import com.clinicaOdonto.Clinica.service.IUsuarioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ public class UsuarioService implements IUsuarioService {
 
     private final UsuarioRespository usuarioRespository;
     private final PasswordEncoder passwordEncoder;
+    private final UsuarioMapper usuarioMapper;
 
     @Override
     @Transactional(readOnly = true)
@@ -43,7 +45,7 @@ public class UsuarioService implements IUsuarioService {
     @Transactional
     public Usuario updateUser(Long id, UsuarioRequestDto requestDto) {
 
-        Usuario user = UsuarioMapper.toEntity(requestDto);
+        Usuario user = usuarioMapper.toEntity(requestDto);
 
         Usuario updateUser = usuarioRespository.findById(id)
                 .orElseThrow(() ->
