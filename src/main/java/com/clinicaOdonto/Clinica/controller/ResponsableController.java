@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class ResponsableController {
     private final IResponsableService responsableService;
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<List<ResponsableDto>> showResponsables() {
         List<ResponsableDto> listaResponsablesDtos = responsableService.findAll()
                                                     .stream()
@@ -30,23 +32,27 @@ public class ResponsableController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<ResponsableDto> showResponsable(@PathVariable Long id) {
         return ResponseEntity.ok(ResponsableMapper.toDto(responsableService.findById(id)));
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<ResponsableDto> createResponsable(@Valid @RequestBody ResponsableDto resp) {
         Responsable respon = responsableService.save(resp);
         return new ResponseEntity<>(ResponsableMapper.toDto(respon), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<ResponsableDto> updateResponsable(@PathVariable Long id, @Valid @RequestBody ResponsableDto resp) {
         Responsable respon = responsableService.update(id, resp);
         return ResponseEntity.ok(ResponsableMapper.toDto(respon));
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<Void> deleteResponsable(@PathVariable Long id) {
         responsableService.deleteById(id);
         return ResponseEntity.noContent().build();

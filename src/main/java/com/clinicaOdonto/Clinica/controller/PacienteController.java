@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,6 +21,7 @@ public class PacienteController {
     private final IPacienteService pacienteService;
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<List<PacienteDto>> showPacients() {
         List<PacienteDto> listaPacientes = pacienteService.findAll()
                 .stream()
@@ -29,23 +31,27 @@ public class PacienteController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<PacienteDto> showPacient(@PathVariable Long id) {
         return ResponseEntity.ok(PacienteMapper.toDto(pacienteService.findById(id)));
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<PacienteDto> createPacient(@Valid @RequestBody PacienteDto requestDto) {
         Paciente paciente = pacienteService.save(requestDto);
         return new ResponseEntity<>(PacienteMapper.toDto(paciente), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<PacienteDto> updatePacient(@PathVariable Long id, @Valid @RequestBody PacienteDto requestDto) {
         Paciente updatePaciente = pacienteService.update(id, requestDto);
         return ResponseEntity.ok(PacienteMapper.toDto(updatePaciente));
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<Void> deletePacient(@PathVariable Long id) {
         pacienteService.deleteById(id);
         return ResponseEntity.noContent().build();

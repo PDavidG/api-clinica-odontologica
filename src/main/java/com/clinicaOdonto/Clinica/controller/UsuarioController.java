@@ -1,14 +1,14 @@
 package com.clinicaOdonto.Clinica.controller;
 
 import com.clinicaOdonto.Clinica.domain.Usuario;
-import com.clinicaOdonto.Clinica.dto.UsuarioRequestDto;
+import com.clinicaOdonto.Clinica.security.dto.UsuarioRequestDto;
 import com.clinicaOdonto.Clinica.dto.UsuarioResponseDto;
 import com.clinicaOdonto.Clinica.mapper.UsuarioMapper;
 import com.clinicaOdonto.Clinica.service.IUsuarioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +22,7 @@ public class UsuarioController {
     private final IUsuarioService usuarioService;
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<List<UsuarioResponseDto>> obtenerUsuarios() {
         List<UsuarioResponseDto> listaUsu = usuarioService.findAll()
                 .stream()
@@ -31,6 +32,7 @@ public class UsuarioController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<UsuarioResponseDto> obtenerUsuario(@PathVariable long id) {
         Usuario user = usuarioService.findById(id);
         UsuarioResponseDto responseDto = UsuarioMapper.toDto(user);
@@ -38,6 +40,7 @@ public class UsuarioController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<UsuarioResponseDto> actualizarUsuario(@PathVariable long id, @Valid @RequestBody UsuarioRequestDto requestDto) {
 
         Usuario usuario = usuarioService.updateUser(id, requestDto);
@@ -46,6 +49,7 @@ public class UsuarioController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<Void> borrarUsuario(@PathVariable Long id) {
         usuarioService.deleteById(id);
         return ResponseEntity.noContent().build();
