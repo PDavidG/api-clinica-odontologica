@@ -2,10 +2,12 @@ package com.clinicaOdonto.Clinica.mapper;
 
 import com.clinicaOdonto.Clinica.domain.Horario;
 import com.clinicaOdonto.Clinica.dto.HorarioRequestDto;
+import org.springframework.stereotype.Component;
 
-public interface HorarioMapper {
+@Component
+public class HorarioMapper {
 
-    public static Horario toEntity(HorarioRequestDto requestDto) {
+    public Horario toEntity(HorarioRequestDto requestDto) {
 
         if (requestDto == null) {
             return null;

@@ -16,11 +16,12 @@ import java.util.List;
 public class HorarioService implements IHorarioService{
 
     private final HorarioRepository horarioRepository;
+    private final HorarioMapper horarioMapper;
 
     @Override
     @Transactional
     public Horario save(HorarioRequestDto horarioRequest) {
-        Horario hora = HorarioMapper.toEntity(horarioRequest);
+        Horario hora = horarioMapper.toEntity(horarioRequest);
         return horarioRepository.save(hora);
     }
 
@@ -41,7 +42,8 @@ public class HorarioService implements IHorarioService{
     @Override
     @Transactional
     public void deleteById(Long idHorario) {
-        horarioRepository.deleteById(idHorario);
+        Horario deleteHorario = this.findById(idHorario);
+        horarioRepository.deleteById(deleteHorario.getIdHorario());
     }
 
     @Override
