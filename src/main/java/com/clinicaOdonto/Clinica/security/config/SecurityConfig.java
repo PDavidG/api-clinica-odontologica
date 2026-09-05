@@ -71,7 +71,7 @@ public class SecurityConfig {
 
         configuration.setAllowedHeaders(Arrays.asList(
                 "Authorization",
-                "Content-Type",
+                "Content-type",
                 "Accept"
         ));
 
