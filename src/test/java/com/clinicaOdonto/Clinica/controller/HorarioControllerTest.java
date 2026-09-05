@@ -29,6 +29,7 @@ import tools.jackson.databind.ObjectMapper;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(
@@ -173,5 +174,116 @@ class HorarioControllerTest {
         verify(horarioService, times(1)).findAll();
         // test Defensivo
         verify(horarioService, never()).findById(anyLong());
+    }
+
+    @Test
+    @DisplayName("Post /api/v1/horarios -- Debe crear un horario y retornar 201 created")
+    @WithMockUser(username = "adminUser", roles = "ADMIN")
+    void shouldCreatedScheduleSuccessfully() throws Exception {
+
+        HorarioRequestDto horaRequest = new HorarioRequestDto();
+        horaRequest.setHorarioInicio("11:30");
+        horaRequest.setHorarioFin("15:00");
+
+        Horario saveHorario = new Horario();
+        saveHorario.setIdHorario(9L);
+        saveHorario.setHorarioInicio("11:30");
+        saveHorario.setHorarioFin("15:00");
+
+        when(horarioService.save(any(HorarioRequestDto.class))).thenReturn(saveHorario);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/horarios")
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(horaRequest)))
+
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.idHorario").value(9))
+                .andExpect(jsonPath("$.horarioInicio").value("11:30"))
+                .andExpect(jsonPath("$.horarioFin").value("15:00"));
+
+        // Verificación de interacciones con mocks
+        verify(horarioService, times(1)).save(any(HorarioRequestDto.class));
+
+        verify(horarioService, never()).findAll();
+        verify(horarioService, never()).findById(anyLong());
+    }
+
+    @Test
+    @DisplayName("PUT /api/v1/horarios/{id} -- Debe de actualizar un horario existente y retornar 200 OK")
+    @WithMockUser(username = "adminUser", roles = "ADMIN")
+    void shouldUpdateScheduleSuccessfully() throws Exception{
+
+        Long idSchedule = 9L;
+
+        HorarioRequestDto horaRequest = new HorarioRequestDto();
+        horaRequest.setHorarioInicio("08:00");
+        horaRequest.setHorarioFin("21:00");
+
+        Horario horaInstance = new Horario();
+        horaInstance.setIdHorario(idSchedule);
+        horaInstance.setHorarioInicio("08:00");
+        horaInstance.setHorarioFin("21:00");
+
+        when(horarioService.update(eq(idSchedule), any(HorarioRequestDto.class))).thenReturn(horaInstance);
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/horarios/{id}", idSchedule)
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(horaRequest)))
+
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.idHorario").value(9))
+                .andExpect(jsonPath("$.horarioInicio").value("08:00"))
+                .andExpect(jsonPath("$.horarioFin").value("21:00"));
+
+        verify(horarioService, times(1)).update(anyLong(), any(HorarioRequestDto.class));
+
+        verify(horarioService, never()).save(any(HorarioRequestDto.class));
+        verify(horarioService, never()).findById(anyLong());
+        verify(horarioService, never()).findAll();
+    }
+
+    @Test
+    @DisplayName("Delete /api/v1/horarios{id} -- Debe eliminar un horario y retornar 204 No content")
+    @WithMockUser(username = "adminUser", roles = "ADMIN")
+    void shouldDeleteScheduleSuccessfully() throws Exception {
+
+        final Long scheduleIdToDelete = 5L;
+
+        doNothing().when(horarioService).deleteById(scheduleIdToDelete);
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/horarios/{id}", scheduleIdToDelete)
+                .with(csrf()))
+                .andExpect(status().isNoContent());
+
+        verify(horarioService, times(1)).deleteById(scheduleIdToDelete);
+
+        verify(horarioService, never()).findById(anyLong());
+        verify(horarioService, never()).findAll();
+        verify(horarioService, never()).save(any(HorarioRequestDto.class));
+        verify(horarioService, never()).update(anyLong(), any(HorarioRequestDto.class));
+    }
+
+    @Test
+    @DisplayName("Delete /api/v1/horarios/{id} -- Debe retornar 404 Not Found si el horario a eliminar no existe")
+    @WithMockUser(username = "adminUser", roles = "ADMIN")
+    void shoulReturnNotFoundWhenDeletingNoExistsSchedule() throws Exception {
+
+        final Long scheduleIdNotExist = 99L;
+
+        doThrow(new ResourceNotFoundException("No se encontro un horario con el id: " + scheduleIdNotExist))
+                .when(horarioService).deleteById(scheduleIdNotExist);
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/horarios/{id}", scheduleIdNotExist)
+                .with(csrf()))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value(404))
+                .andExpect(jsonPath("$.error").value("Not found"))
+                .andExpect(jsonPath("$.message").value("No se encontro un horario con el id: " + scheduleIdNotExist));
+
+        verify(horarioService, times(1)).deleteById(scheduleIdNotExist);
     }
 }
